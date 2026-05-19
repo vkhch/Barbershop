@@ -45,7 +45,17 @@
     z-index: 100;
     display: flex; align-items: center; justify-content: space-between;
     padding: 1.5rem 4rem;
-    background: linear-gradient(to bottom, rgba(10,10,8,0.95), transparent);
+    background: rgba(10,10,8,0);
+    transition: background 0.4s ease, opacity 0.4s ease;
+  }
+
+  nav.scrolled {
+    background: rgba(10,10,8,0.97);
+  }
+
+  nav.hidden {
+    opacity: 0;
+    pointer-events: none;
   }
 
   .nav-logo {
@@ -81,7 +91,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 8rem 4rem 4rem 6rem;
+    padding: 6rem 4rem 4rem 6rem;
     position: relative;
     z-index: 2;
   }
@@ -677,6 +687,24 @@
     el.addEventListener('mouseenter', () => cursor.style.transform = 'scale(3)');
     el.addEventListener('mouseleave', () => cursor.style.transform = 'scale(1)');
   });
+
+  // Nav: скрывается в hero, появляется при скролле
+  const nav = document.querySelector('nav');
+  const heroHeight = document.querySelector('.hero').offsetHeight;
+
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    if (scrollY < heroHeight * 0.3) {
+      nav.classList.remove('scrolled');
+      nav.classList.add('hidden');
+    } else {
+      nav.classList.remove('hidden');
+      nav.classList.add('scrolled');
+    }
+  });
+
+  // Скрыть nav изначально (мы в hero)
+  nav.classList.add('hidden');
 </script>
 </body>
 </html>
