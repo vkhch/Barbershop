@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLADE & CO. — Premium Barbershop</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Barlow+Condensed:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a08;
+    --cream: #f2ead8;
+    --gold: #c9a84c;
+    --red: #8b1a1a;
+    --gray: #1e1e1a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: 'Barlow Condensed', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease;
+    mix-blend-mode: difference;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem 4rem;
+    background: linear-gradient(to bottom, rgba(10,10,8,0.95), transparent);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+  }
+
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: var(--cream);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 4rem 4rem 6rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-tag {
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 7vw, 7rem);
+    font-weight: 900;
+    line-height: 0.9;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
+  }
+
+  .hero-title span { color: var(--gold); display: block; }
+
+  .hero-desc {
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    line-height: 1.8;
+    opacity: 0;
+    max-width: 360px;
+    color: rgba(242,234,216,0.65);
+    animation: fadeUp 0.8s ease 0.6s forwards;
+    margin-bottom: 3rem;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--gold);
+    color: var(--black);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    padding: 1rem 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.8s forwards;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .hero-cta:hover { background: var(--cream); transform: translateX(4px); }
+
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-img-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, var(--red) 0%, #2a0a0a 40%, #1a1410 100%);
+  }
+
+  .hero-pattern {
+    position: absolute;
+    inset: 0;
+    opacity: 0.06;
+    background-image: repeating-linear-gradient(
+      45deg,
+      var(--cream) 0,
+      var(--cream) 1px,
+      transparent 0,
+      transparent 50%
+    );
+    background-size: 20px 20px;
+  }
+
+  .hero-scissors {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12rem;
+    opacity: 0.15;
+    animation: slowSpin 20s linear infinite;
+  }
+
+  .hero-number {
+    position: absolute;
+    bottom: 3rem;
+    right: 3rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 10rem;
+    font-weight: 900;
+    color: rgba(201,168,76,0.08);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  /* TICKER */
+  .ticker {
+    background: var(--gold);
+    color: var(--black);
+    padding: 0.75rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .ticker-inner {
+    display: inline-flex;
+    gap: 0;
+    animation: ticker 20s linear infinite;
+  }
+
+  .ticker-item {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    padding: 0 3rem;
+  }
+
+  .ticker-dot {
+    opacity: 0.4;
+  }
+
+  /* SERVICES */
+  .services {
+    padding: 8rem 6rem;
+    position: relative;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    font-weight: 700;
+    margin-bottom: 5rem;
+    max-width: 500px;
+    line-height: 1.1;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .service-item {
+    padding: 3rem;
+    border-right: 1px solid rgba(201,168,76,0.2);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .service-item:last-child { border-right: none; }
+  .service-item:hover { background: rgba(201,168,76,0.04); }
+
+  .service-item::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .service-item:hover::before { transform: scaleX(1); }
+
+  .service-num {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    opacity: 0.6;
+  }
+
+  .service-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  .service-desc {
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: rgba(242,234,216,0.5);
+    margin-bottom: 2rem;
+  }
+
+  .service-price {
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+  }
+
+  .service-price span {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    opacity: 0.6;
+    vertical-align: super;
+  }
+
+  /* ABOUT */
+  .about {
+    padding: 8rem 6rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8rem;
+    align-items: center;
+    background: var(--gray);
+  }
+
+  .about-visual {
+    position: relative;
+    height: 500px;
+  }
+
+  .about-box {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(201,168,76,0.3);
+  }
+
+  .about-box-inner {
+    position: absolute;
+    top: 2rem; left: 2rem; right: -2rem; bottom: -2rem;
+    background: linear-gradient(135deg, var(--red) 0%, #3d0000 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8rem;
+  }
+
+  .about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .stat { border-left: 2px solid var(--gold); padding-left: 1.5rem; }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin-top: 0.3rem;
+  }
+
+  /* BOOKING */
+  .booking {
+    padding: 8rem 6rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .booking::before {
+    content: 'BOOK';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Playfair Display', serif;
+    font-size: 20rem;
+    font-weight: 900;
+    color: rgba(201,168,76,0.03);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .booking-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    font-weight: 900;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .booking-sub {
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    opacity: 0.5;
+    text-transform: uppercase;
+    margin-bottom: 4rem;
+    position: relative;
+  }
+
+  .booking-form {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .booking-form input, .booking-form select {
+    background: rgba(242,234,216,0.05);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--cream);
+    padding: 1rem 1.5rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    outline: none;
+    flex: 1;
+    min-width: 180px;
+    transition: border-color 0.2s;
+  }
+
+  .booking-form input:focus, .booking-form select:focus {
+    border-color: var(--gold);
+  }
+
+  .booking-form select option { background: var(--black); }
+
+  .booking-btn {
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    padding: 1rem 3rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  .booking-btn:hover { background: var(--cream); transform: translateY(-2px); }
+
+  /* FOOTER */
+  footer {
+    background: var(--gray);
+    padding: 4rem 6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+  }
+
+  .footer-copy {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    opacity: 0.3;
+    text-transform: uppercase;
+  }
+
+  .footer-links { display: flex; gap: 2rem; }
+  .footer-links a {
+    color: var(--cream);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+  }
+  .footer-links a:hover { opacity: 1; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  @keyframes slowSpin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 1.5rem 2rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .hero-left { padding: 7rem 2rem 4rem; }
+    .services { padding: 5rem 2rem; }
+    .services-grid { grid-template-columns: 1fr; }
+    .service-item { border-right: none; border-bottom: 1px solid rgba(201,168,76,0.2); }
+    .about { grid-template-columns: 1fr; padding: 5rem 2rem; gap: 3rem; }
+    .about-visual { display: none; }
+    .booking { padding: 5rem 2rem; }
+    footer { flex-direction: column; gap: 2rem; padding: 3rem 2rem; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="nav-logo">BLADE & CO.</div>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#booking">Book</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-tag">Est. 2009 — New York City</p>
+    <h1 class="hero-title">
+      THE ART<br>
+      OF THE<br>
+      <span>PERFECT</span>
+      CUT.
+    </h1>
+    <p class="hero-desc">Where precision meets tradition. Every cut tells a story — let us write yours.</p>
+    <a href="#booking" class="hero-cta">Book Appointment →</a>
+  </div>
+  <div class="hero-right">
+    <div class="hero-img-bg"></div>
+    <div class="hero-pattern"></div>
+    <div class="hero-scissors">✂</div>
+    <div class="hero-number">01</div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ticker-item">Premium Cuts</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">Hot Towel Shave</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">Beard Grooming</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">Hair Coloring</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">Walk-ins Welcome</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">Premium Cuts</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">Hot Towel Shave</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">Beard Grooming</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">Hair Coloring</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">Walk-ins Welcome</span>
+    <span class="ticker-item ticker-dot">✦</span>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <p class="section-label">What We Offer</p>
+  <h2 class="section-title">Our Signature Services</h2>
+  <div class="services-grid">
+    <div class="service-item">
+      <p class="service-num">01</p>
+      <h3 class="service-name">Classic Cut</h3>
+      <p class="service-desc">A timeless cut tailored to your face shape. Includes wash, cut, and style.</p>
+      <div class="service-price"><span>$</span>35</div>
+    </div>
+    <div class="service-item">
+      <p class="service-num">02</p>
+      <h3 class="service-name">Hot Towel Shave</h3>
+      <p class="service-desc">Traditional straight razor shave with hot towel treatment and premium oils.</p>
+      <div class="service-price"><span>$</span>45</div>
+    </div>
+    <div class="service-item">
+      <p class="service-num">03</p>
+      <h3 class="service-name">Beard Sculpt</h3>
+      <p class="service-desc">Full beard shaping and detailing. Lines, fade, and finishing balm included.</p>
+      <div class="service-price"><span>$</span>30</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-visual">
+    <div class="about-box"></div>
+    <div class="about-box-inner">✂</div>
+  </div>
+  <div class="about-content">
+    <p class="section-label">Our Story</p>
+    <h2 class="section-title">Craft Over Everything</h2>
+    <p style="font-size:0.95rem; line-height:1.9; color:rgba(242,234,216,0.6); margin-bottom:1rem;">
+      Since 2009, Blade & Co. has been the cornerstone of grooming in New York City. We believe a great haircut is more than aesthetics — it's confidence.
+    </p>
+    <p style="font-size:0.95rem; line-height:1.9; color:rgba(242,234,216,0.6);">
+      Our barbers are trained in both classic and modern techniques, ensuring every client leaves looking and feeling their best.
+    </p>
+    <div class="about-stats">
+      <div class="stat">
+        <div class="stat-num">15+</div>
+        <div class="stat-label">Years Open</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">8K+</div>
+        <div class="stat-label">Happy Clients</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">6</div>
+        <div class="stat-label">Expert Barbers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">4.9★</div>
+        <div class="stat-label">Average Rating</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section class="booking" id="booking">
+  <h2 class="booking-title">Reserve Your Chair</h2>
+  <p class="booking-sub">Walk-ins welcome — appointments guaranteed</p>
+  <div class="booking-form">
+    <input type="text" placeholder="Your Name">
+    <select>
+      <option value="" disabled selected>Select Service</option>
+      <option>Classic Cut — $35</option>
+      <option>Hot Towel Shave — $45</option>
+      <option>Beard Sculpt — $30</option>
+    </select>
+    <input type="date">
+    <button class="booking-btn">Book Now</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">BLADE & CO.</div>
+  <p class="footer-copy">© 2025 Blade & Co. All rights reserved.</p>
+  <div class="footer-links">
+    <a href="#">Instagram</a>
+    <a href="#">Facebook</a>
+    <a href="#">Contact</a>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX - 6 + 'px';
+    cursor.style.top = e.clientY - 6 + 'px';
+  });
+
+  // Hover effect on interactive elements
+  document.querySelectorAll('a, button, .service-item').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.style.transform = 'scale(3)');
+    el.addEventListener('mouseleave', () => cursor.style.transform = 'scale(1)');
+  });
+</script>
+</body>
+</html>
